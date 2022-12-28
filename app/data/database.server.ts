@@ -3,17 +3,21 @@ import { PrismaClient } from '@prisma/client'
 /**
  * @type PrismaClient
  */
-let prisma
+let db: PrismaClient;
+
+declare global {
+  var __db: PrismaClient | undefined
+}
 
 if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-  prisma.$connect()
+  db = new PrismaClient()
+  db.$connect()
 } else {
   if (!global.__db) {
     global.__db = new PrismaClient()
     global.__db.$connect()
   }
-  prisma = global.__db
+  db = global.__db
 }
 
-export { prisma }
+export { db as prisma }

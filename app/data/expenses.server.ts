@@ -1,6 +1,7 @@
+import type { Expense } from '~/types'
 import { prisma } from './database.server'
 
-export async function addExpense(expenseData, userId) {
+export async function addExpense(expenseData: Expense, userId: string): Promise<Expense> {
   try {
     return await prisma.expense.create({
       data: {
@@ -16,7 +17,7 @@ export async function addExpense(expenseData, userId) {
   }
 }
 
-export async function getExpenses(userId) {
+export async function getExpenses(userId: string): Promise<Expense[]> {
   if (!userId) {
     throw new Error('Failed to get expenses.')
   }
@@ -36,18 +37,18 @@ export async function getExpenses(userId) {
   }
 }
 
-export async function getExpense(id) {
+export async function getExpense(id:string): Promise<Expense> {
   try {
     const expense = await prisma.expense.findFirst({
       where: { id: id },
     })
-    return expense
+    return expense as Expense
   } catch (error) {
     throw new Error('Failed to Get Expense.')
   }
 }
 
-export async function updateExpense(id, expenseData) {
+export async function updateExpense(id: string, expenseData: Expense):Promise<Expense> {
   try {
     const updatedExpense = await prisma.expense.update({
       where: { id },
@@ -63,7 +64,7 @@ export async function updateExpense(id, expenseData) {
   }
 }
 
-export async function deleteExpense(id) {
+export async function deleteExpense(id: string) {
   try {
     await prisma.expense.delete({
       where: { id },

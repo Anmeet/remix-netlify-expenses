@@ -6,8 +6,10 @@ import {
   updateExpense,
 } from '~/data/expenses.server'
 import Modal from '../../../components/util/Modal'
+import type { ActionArgs, MetaFunction} from '@remix-run/node';
 import { redirect } from '@remix-run/node'
 import { validateExpenseInput } from '~/data/validation.server'
+import type { Expense } from '~/types'
 
 const UpdateExpensesPage = () => {
   const navigate = useNavigate()
@@ -30,7 +32,7 @@ export default UpdateExpensesPage
 //   return expense;
 // }
 
-export async function action({ params, request }: any) {
+export async function action({ params, request }: ActionArgs) {
   const expenseId = params.id
 
   if (request.method === 'PATCH') {
@@ -38,21 +40,21 @@ export async function action({ params, request }: any) {
     const expenseData = Object.fromEntries(formData)
 
     try {
-      validateExpenseInput(expenseData)
+      validateExpenseInput(expenseData as unknown as Expense)
     } catch (error) {
       return error
     }
-    await updateExpense(expenseId, expenseData)
+    await updateExpense(expenseId as string, expenseData as unknown as Expense)
     return redirect('/expenses')
   } else if (request.method === 'DELETE') {
-    await deleteExpense(expenseId)
+    await deleteExpense(expenseId as string)
     return {
       deletedId: expenseId,
     }
   }
 }
 
-export function meta({ params, location, data, parentsData }: any) {
+export const meta: MetaFunction =({ params, location, data, parentsData }) => {
   const expense = parentsData['routes/__app/expenses'].find(
     (expense: any) => expense.id === params.id
   )

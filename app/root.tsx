@@ -1,4 +1,4 @@
-import type { MetaFunction } from '@remix-run/node'
+import type { LinksFunction, MetaFunction } from '@remix-run/node'
 import {
   Link,
   Links,
@@ -9,10 +9,12 @@ import {
   ScrollRestoration,
   useCatch,
 } from '@remix-run/react'
-import Error from '~/components/util/Error'
+
 
 import sharedStyles from '~/styles/shared.css'
 import { useMatches } from '@remix-run/react'
+import React from 'react'
+import ErrorComp from './components/util/ErrorComp'
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -20,7 +22,7 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 })
 
-function Document({ title, children }: any) {
+function Document({ title, children }: {children: React.ReactNode; title?:string}) {
   const matches = useMatches()
 
   const disableJS = matches.some((match) => match.handle?.disableJS)
@@ -55,7 +57,7 @@ export function CatchBoundary() {
   return (
     <Document>
       <main>
-        <Error title={caughtResponse.statusText}>
+        <ErrorComp title={caughtResponse.statusText}>
           <p>
             {caughtResponse.data?.message ||
               'Something went wrong. Please try again later'}
@@ -63,7 +65,7 @@ export function CatchBoundary() {
           <p>
             Back to <Link to='/'>safety</Link>
           </p>
-        </Error>
+        </ErrorComp>
       </main>
     </Document>
   )
@@ -73,19 +75,19 @@ export function ErrorBoundary({ error }: any) {
   return (
     <Document title=' An Error Occured'>
       <main>
-        <Error title='An error Occured'>
+        <ErrorComp title='An error Occured'>
           <p>
             {error.message || 'Something went wrong. Please try again later'}
           </p>
           <p>
             Back to <Link to='/'>safety</Link>
           </p>
-        </Error>
+        </ErrorComp>
       </main>
     </Document>
   )
 }
 
-export function links() {
+export const links:LinksFunction = () => {
   return [{ rel: 'stylesheet', href: sharedStyles }]
 }

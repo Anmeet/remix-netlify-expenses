@@ -1,3 +1,4 @@
+import type { MetaFunction } from '@remix-run/node'
 import { FaTrophy, FaHandshake } from 'react-icons/fa'
 
 import PricingPlan from '~/components/marketing/PricingPlan'
@@ -41,7 +42,7 @@ export default function PricingPage() {
 
 export const handle = { disableJS: true }
 
-export function meta() {
+export const meta: MetaFunction = () => {
   return {
     title: 'Pricing',
     description:
